@@ -362,6 +362,15 @@ function filtering_danil_at_kutkevich_org(mail_account)
     return
   end
 
+  -- redis mailing list messages filtering
+  local mailbox = mail_account._new
+  local results = mailbox:is_unseen() *
+    mailbox:contain_field("List-Id", "redis-db.googlegroups.com")
+  total_count = move_mails{box=mail_account.RedisList, mails=results, count=total_count}
+  if is_should_return{box=mail_account._new, count=total_count} then
+    return
+  end
+
   -- Jolla users group messages filtering
   local mailbox = mail_account._new
   local results = mailbox:is_unseen() *
@@ -438,6 +447,12 @@ function filtering_danil_at_kutkevich_org(mail_account)
     return
   end
 
+  -- Rocket messages filtering
+  local results = mailbox:is_unseen() * messages_to_rocket(mailbox) results:move_messages(mail_account.ErRocketbank)
+
+  -- Qiwi messages filtering
+  local results = mailbox:is_unseen() * messages_to_qiwi(mailbox) results:move_messages(mail_account.ErQiwi)
+
   -- unfiltered messages
   local mailbox = mail_account._new
   local results = mailbox:is_unseen()
@@ -478,6 +493,17 @@ function filtering_danil_at_kutkevich_org(mail_account)
   -- -- velodrive.ru messages filtering -- local results = mailbox:is_unseen() * mailbox:contain_from("info@velodrive.ru") * mailbox:contain_field("list-id", "3c63feb6") * mailbox:contain_field("Content-Type", "multipart/alternative") results:move_messages(mail_account.Velodrive)
 end
 
+function messages_to_rocket(mailbox)
+  return (mailbox:contain_to("d.kutkevich@rocketguys.com") +
+            mailbox:contain_cc("d.kutkevich@rocketguys.com") +
+            mailbox:contain_bcc("d.kutkevich@rocketguys.com"))
+end
+
+function messages_to_qiwi(mailbox)
+  return (mailbox:contain_to("d.kutkevich@qiwi.com") +
+            mailbox:contain_cc("d.kutkevich@qiwi.com") +
+            mailbox:contain_bcc("d.kutkevich@qiwi.com"))
+end
 
 -- function messages_to_armor5games(mailbox)
 --   return ((mailbox:contain_to("armor5games@gmail.com") +
