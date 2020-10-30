@@ -11,6 +11,6 @@ require "config/danil_at_kutkevich_org"
 -- the monitored using the IMAP IDLE extension.
 while true do
   local mailbox = danil_at_kutkevich_org._new
-  mailbox:enter_idle()
   filtering_danil_at_kutkevich_org(danil_at_kutkevich_org)
+  mailbox:enter_idle()
 end
