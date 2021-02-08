@@ -92,7 +92,8 @@ function filtering_danil_at_kutkevich_org(mail_account)
   -- Vim users group mailing list filtering
   local mailbox = mail_account._new
   local results = mailbox:is_unseen() *
-    mailbox:contain_field("List-Id", "vim_dev.googlegroups.com")
+    (mailbox:contain_field("List-Id", "vim_dev.googlegroups.com") +
+     mailbox:contain_field("List-Id", "vim.vim.github.com"))
   total_count = move_mails{box=mail_account.VimList, mails=results, count=total_count}
   if is_should_return{box=mail_account._new, count=total_count} then
     return
