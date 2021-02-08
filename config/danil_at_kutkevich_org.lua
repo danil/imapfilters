@@ -73,48 +73,6 @@ function filtering_danil_at_kutkevich_org(mail_account)
     end
   end
 
-  -- armor5games.org hosts messages filtering
-  local mailbox = mail_account._new
-  local results0 = mailbox:is_unseen() * mailbox:contain_from("armor5games.com")
-  if #results0 > 0 then
-    -- ah9 host messages filtering
-    local results1 = results0:contain_from("ah9.armor5games.com")
-    if #results1 > 0 then
-      -- ah9 netdata annoying notification messages filtering
-      local results = results1:contain_from("netdata@ah9.armor5games.com")
-      if #results > 0 then
-        results = results:contain_subject("recovered - last collected secs - web_log_nginx")
-        total_count = move_mails{box=mail_account.ErA5gComAh9, mails=results, count=total_count}
-        if is_should_return{box=mail_account._new, count=total_count} then
-          return
-        end
-      end
-      local results = results1:contain_subject("/usr/sbin/anacron")
-      if #results > 0 then
-        results = results:contain_body("run-parts: /etc/cron.monthly/ieee-data exited with return code 1") +
-          (mailbox:contain_body("exim4-base") +
-             mailbox:contain_body("WARNING: purging the environment"))
-        total_count = move_mails{box=mail_account.ErA5gComAh9, mails=results, count=total_count}
-        if is_should_return{box=mail_account._new, count=total_count} then
-          return
-        end
-      end
-    end
-  end
-
-  -- bh1 cron notification messages filtering
-  local mailbox = mail_account._new
-  local results = mailbox:is_unseen() *
-    mailbox:contain_from("bh1.armor5games.com") *
-    mailbox:contain_subject("/usr/sbin/anacron") *
-    (mailbox:contain_body("run-parts: /etc/cron.monthly/ieee-data exited with return code 1") +
-       (mailbox:contain_body("exim4-base") +
-          mailbox:contain_body("WARNING: purging the environment")))
-  total_count = move_mails{box=mail_account.ErA5gComBh1, mails=results, count=total_count}
-  if is_should_return{box=mail_account._new, count=total_count} then
-    return
-  end
-
   -- monit notifications messages filtering
   local mailbox = mail_account._new
   local results0 = mailbox:is_unseen() *
@@ -131,12 +89,11 @@ function filtering_danil_at_kutkevich_org(mail_account)
     end
   end
 
-  -- bh1 netdata annoying notification messages filtering
+  -- Vim users group mailing list filtering
   local mailbox = mail_account._new
   local results = mailbox:is_unseen() *
-    mailbox:contain_from("netdata@bh1.armor5games.com") *
-    mailbox:contain_subject("recovered - last collected secs - web_log_nginx")
-  total_count = move_mails{box=mail_account.ErA5gComBh1, mails=results, count=total_count}
+    mailbox:contain_field("List-Id", "vim_dev.googlegroups.com")
+  total_count = move_mails{box=mail_account.VimList, mails=results, count=total_count}
   if is_should_return{box=mail_account._new, count=total_count} then
     return
   end
@@ -458,6 +415,9 @@ function filtering_danil_at_kutkevich_org(mail_account)
   local results = mailbox:is_unseen()
   _ = move_mails{box=mail_account.INBOX, mails=results, count=total_count}
 
+  -- armor5games.org hosts messages filtering; local mailbox = mail_account._new; local results0 = mailbox:is_unseen() * mailbox:contain_from("armor5games.com"); if #results0 > 0 then; -- ah9 host messages filtering; local results1 = results0:contain_from("ah9.armor5games.com"); if #results1 > 0 then; -- ah9 netdata annoying notification messages filtering; local results = results1:contain_from("netdata@ah9.armor5games.com"); if #results > 0 then; results = results:contain_subject("recovered - last collected secs - web_log_nginx"); total_count = move_mails{box=mail_account.ErA5gComAh9, mails=results, count=total_count}; if is_should_return{box=mail_account._new, count=total_count} then; return; end; end; local results = results1:contain_subject("/usr/sbin/anacron"); if #results > 0 then; results = results:contain_body("run-parts: /etc/cron.monthly/ieee-data exited with return code 1") +; (mailbox:contain_body("exim4-base") +; mailbox:contain_body("WARNING: purging the environment")); total_count = move_mails{box=mail_account.ErA5gComAh9, mails=results, count=total_count}; if is_should_return{box=mail_account._new, count=total_count} then; return; end; end; end; end;
+  -- bh1 cron notification messages filtering; local mailbox = mail_account._new; local results = mailbox:is_unseen() *; mailbox:contain_from("bh1.armor5games.com") *; mailbox:contain_subject("/usr/sbin/anacron") *; (mailbox:contain_body("run-parts: /etc/cron.monthly/ieee-data exited with return code 1") +; (mailbox:contain_body("exim4-base") +; mailbox:contain_body("WARNING: purging the environment"))); total_count = move_mails{box=mail_account.ErA5gComBh1, mails=results, count=total_count}; if is_should_return{box=mail_account._new, count=total_count} then; return; end;
+  -- bh1 netdata annoying notification messages filtering; local mailbox = mail_account._new; local results = mailbox:is_unseen() *; mailbox:contain_from("netdata@bh1.armor5games.com") *; mailbox:contain_subject("recovered - last collected secs - web_log_nginx"); total_count = move_mails{box=mail_account.ErA5gComBh1, mails=results, count=total_count}; if is_should_return{box=mail_account._new, count=total_count} then; return; end;
   -- -- -- FIXME: cyrillic not working!!! -- -- auto.ru notification messages filtering -- local results = mailbox:is_unseen() * mailbox:contain_from("noreply@auto.ru") * mailbox:contain_subject("Найдены новые объявления") results:move_messages(mail_account.AutoRuFeed)
   -- -- Arch Linux Saint Petersburg users group messages filtering -- -- <http://groups.google.com/group/spb-archlinux>. -- local mailbox = mail_account._new local results = mailbox:is_unseen() * mailbox:contain_field("List-Id", "spb-archlinux.googlegroups.com") * mailbox:contain_field("list-post", "<spb-archlinux.googlegroups.com>") results:move_messages(mail_account.Lists)
   -- -- Awesome WM developers group mailing list messages filtering -- local results = mailbox:is_unseen() * mailbox:contain_field("List-Id", "awesome-devel.naquadah.org") results:move_messages(mail_account.AwesomeDevelList)
